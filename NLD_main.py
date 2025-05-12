@@ -11,18 +11,19 @@ from Database import Database, postgres_upsert
 # 屏蔽所有警告
 warnings.filterwarnings('ignore')
 
-def pred(is_upsert=False):
+def pred(pred_ym=None, is_upsert=False):
     '''
     從資料庫判斷需預測之期間，預測三個月淨尖離峰落差值
     參數說明：
-    
+        pred_ym -- 預設為空，依據資料庫自動預測未來兩個月，也可用 ['2025-05', '2025-06'] 指定預測月份
         is_upsert -- 是否將結果更新至資料庫
     '''
     db = Database()
     df = db.get_input()
     # df = df[df['temp_avg_north'].notna()]
     df['YM'] = [datetime(df['year'][i],df['month'][i],1).strftime('%Y-%m') for i in range(len(df))]
-    pred_ym = df['YM'][df['is_real']==False].reset_index(drop=True)[1:].reset_index(drop=True)[:2]
+    if pred_ym is None:
+        pred_ym = df['YM'][df['is_real']==False].reset_index(drop=True)[1:].reset_index(drop=True)[:2]
     samples = 30
     Result = pd.DataFrame(np.full((samples, len(pred_ym)),np.nan), columns=pred_ym)
     Model_tag = [i+1 for i in range(len(pred_ym))]
