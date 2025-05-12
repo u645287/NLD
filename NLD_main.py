@@ -38,7 +38,7 @@ def pred(is_upsert=False):
         for r in range(samples):
             model = tf.keras.models.load_model(f'model/{Model_tag[p]}_{r+1}.h5', compile = False)
             value = model.predict(data)[0][0]*10000
-            Result_db['nl_diff_avg'][p*samples+r] = value
+            Result_db.loc[p * samples + r, 'nl_diff_avg'] = value
             Result.iloc[r,p] = value
     stat_Result = pd.DataFrame({'YM'    :pred_ym,
                                 'avg'   :Result.mean().values,
