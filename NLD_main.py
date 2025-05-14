@@ -15,7 +15,7 @@ def pred(pred_ym=None, is_upsert=False):
     '''
     從資料庫判斷需預測之期間，預測三個月淨尖離峰落差值
     參數說明：
-        pred_ym -- 預設為空，依據資料庫自動預測未來兩個月，也可用 ['2025-05', '2025-06'] 指定預測月份
+        pred_ym -- 預設為空，依據資料庫自動預測未來兩個月，也可用 ['2025-05', '2025-06'] 指定預測月份(最多兩個月)
         is_upsert -- 是否將結果更新至資料庫
     '''
     db = Database()
@@ -41,6 +41,7 @@ def pred(pred_ym=None, is_upsert=False):
             value = model.predict(data)[0][0]*10000
             Result_db.loc[p * samples + r, 'nl_diff_avg'] = value
             Result.iloc[r,p] = value
+            print(f'{round(100*(p*30+r+1)/(samples*len(pred_ym)))}%')
     stat_Result = pd.DataFrame({'YM'    :pred_ym,
                                 'avg'   :Result.mean().values,
                                 'sd'    :Result.std().values})

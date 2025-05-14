@@ -93,7 +93,7 @@ def get_basic_structure(input_NPD_r,
     dense_Temp_C_f = Dense(num_dense, activation='silu', kernel_initializer='lecun_normal', kernel_regularizer=l1_l2(l1=l1, l2=l2))(input_Temp_C_f)
     dense_Temp_S_f = Dense(num_dense, activation='silu', kernel_initializer='lecun_normal', kernel_regularizer=l1_l2(l1=l1, l2=l2))(input_Temp_S_f)
     concat_Temp_f = concatenate([dense_Temp_N_f, dense_Temp_C_f, dense_Temp_S_f])
-    dense_Temp_f = Dense(num_dense, activation='selu', kernel_initializer='lecun_normal', kernel_regularizer=l1_l2(l1=l1, l2=l2))(concat_Temp_f)
+    dense_Temp_f = Dense(num_dense, activation='silu', kernel_initializer='lecun_normal', kernel_regularizer=l1_l2(l1=l1, l2=l2))(concat_Temp_f)
     
     dense_Load_f = Dense(num_dense, activation='silu', kernel_initializer='lecun_normal', kernel_regularizer=l1_l2(l1=l1, l2=l2))(input_Load_f)
     # 合併
