@@ -77,3 +77,9 @@ def train(pre_period=1, tolerance=3):
                 print(f"{model.predict(data['X_test'])}")
                 break
         model.save(f'model/{filename}')
+
+if __name__ == "__main__":
+    result = pred()
+    with pd.ExcelWriter("./RESULT.xlsx") as writer:
+        result[0].to_excel(writer, sheet_name="執行結果", index=False)
+        result[1].to_excel(writer, sheet_name="執行明細", index=False)
