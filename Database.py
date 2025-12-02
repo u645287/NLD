@@ -13,6 +13,7 @@ class Database(object):
         self.engine.dispose()
     def get_input(self):
         return pd.read_sql('select * from ordc_edreg_input order by year, month',self.engine)
+    
 def postgres_upsert(table, conn, keys, data_iter):
     from sqlalchemy.dialects.postgresql import insert
 

@@ -46,7 +46,7 @@ def get_input(target_year, target_month, early_month):
             np.reshape(tx_s_f, (1,1)),
             np.reshape(load_f, (1,1))]
 
-def get_data(future_point, refer_length=12, val_num=3):
+def get_data(future_point, refer_length=12, val_num=6):
     X_train, X_val, X_test, Y_train, Y_val, Y_test = data_split(future_point, refer_length, val_num)
     X_train_fit, Y_train_fit = get_XY(X_train, Y_train)
     X_val_fit, Y_val_fit = get_XY(X_val, Y_val)
@@ -59,7 +59,7 @@ def get_data(future_point, refer_length=12, val_num=3):
             'Y_test'  : Y_test_fit}
 
 #%% ------資料切片(data discretization)-----------
-def data_split(future_point, refer_length=12, val_num=3):
+def data_split(future_point, refer_length=12, val_num=6):
     db = Database()
     df = db.get_input()
     df = df[df['temp_avg_north'].notna()]
