@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 import NLD_data
 import NLD_model
 import os
@@ -28,10 +29,10 @@ def pred(pred_ym=None, is_upsert=False):
     Result = pd.DataFrame(np.full((samples, len(pred_ym)),np.nan), columns=pred_ym)
     Model_tag = [i+1 for i in range(len(pred_ym))]
     Result_db = pd.DataFrame({'year'        :np.repeat([int(pred_ym[i][:4]) for i in range(len(pred_ym))],samples),
-                             'month'        :np.repeat([int(pred_ym[i][5:7]) for i in range(len(pred_ym))],samples),
-                             'model_name'   :[str(Model_tag[p])+'_'+str(s) for p in range(len(pred_ym)) for s in range(1,samples+1)],
-                             'nl_diff_avg'  :np.nan,
-                             'exe_time'     :datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
+                              'month'        :np.repeat([int(pred_ym[i][5:7]) for i in range(len(pred_ym))],samples),
+                              'model_name'   :[str(Model_tag[p])+'_'+str(s) for p in range(len(pred_ym)) for s in range(1,samples+1)],
+                              'nl_diff_avg'  :np.nan,
+                              'exe_time'     :datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
     for p in range(len(pred_ym)):
         data = NLD_data.get_input(target_year=int(pred_ym[p][:4]),
                                   target_month=int(pred_ym[p][5:]),
@@ -48,7 +49,7 @@ def pred(pred_ym=None, is_upsert=False):
     if is_upsert:
         Result_db.to_sql('ordc_edreg_forecast',db.engine,if_exists='append',index=False,method=postgres_upsert)
     return (stat_Result, Result)
-    
+
 def train(pre_period=1, tolerance=3):
     data = NLD_data.get_data(pre_period)
     start_from_epoch = 100
@@ -77,3 +78,9 @@ def train(pre_period=1, tolerance=3):
                 print(f"{model.predict(data['X_test'])}")
                 break
         model.save(f'model/{filename}')
+
+if __name__ == "__main__":
+    result = pred()
+    with pd.ExcelWriter(f"./{datetime.now().strftime("%Y-%m")}參數輸出結果.xlsx") as writer:
+        result[0].to_excel(writer, sheet_name="執行結果", index=False)
+        result[1].to_excel(writer, sheet_name="執行明細", index=False)
